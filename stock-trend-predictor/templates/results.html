@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Prediction Results</title>
+    <!-- Load Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+        /* Custom style to ensure Plotly charts have a consistent height */
+        .plotly-graph-container > div {
+            min-height: 450px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5 mb-5">
+    <!-- Source Information -->
+    <p class="text-center text-secondary mb-4 small">{{ source_info }}</p> 
+    
+    <div class="card p-4 shadow-lg">
+        <h1 class="text-center text-success mb-4 border-bottom pb-3">
+            <span class="fw-bold">Forecasting Analysis</span>
+            <br>
+            <span class="h4 text-dark mt-2">🏆 Best Model: {{ best_model }}</span>
+        </h1>
+
+        <h4 class="text-center text-primary mt-4 mb-3">📊 Model Performance Metrics (Test Set)</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mt-3 text-center align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Model</th>
+                    <th>RMSE (Lower is Better)</th>
+                    <th>R² Score (Closer to 1 is Better)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for model, data in scores.items() %}
+                <tr class="{% if model == best_model %} table-success fw-bold {% endif %}">
+                    <td>{{ model }}</td>
+                    <td>{{ data.RMSE | round(4) }}</td>
+                    <td>{{ data.R2 | round(4) }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-5">
+
+        <!-- Historical Chart -->
+        <h4 class="text-center mb-3">🕯️ Historical Candlestick Chart</h4>
+        <div class="plotly-graph-container">
+            {{ candle_html | safe }}
+        </div>
+
+        <hr class="my-5">
+
+        <!-- Comparison Chart -->
+        <h4 class="text-center mb-3">📈 Actual vs Predicted Comparison (Test Set)</h4>
+        <div class="plotly-graph-container">
+            {{ comp_html | safe }}
+        </div>
+
+        <hr class="my-5">
+
+        <!-- Forecast Chart -->
+        <h4 class="text-center mb-3">🔮 Next 30 Days Forecast</h4>
+        <div class="plotly-graph-container">
+            {{ forecast_html | safe }}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary btn-lg shadow">← Start New Analysis</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
